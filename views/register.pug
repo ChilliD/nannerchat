@@ -1,0 +1,26 @@
+extends layouts/login-layout.pug
+
+block content
+    .login-container
+        h1 Register 
+        form#registerForm(method="post", onsubmit="event.preventDefault(); validatePass();")
+
+            p.error-message #{errorMsg}
+            input(type="text", name="logUsername", placeholder="Username", value=username, required="true")
+            input#pass(type="password", name="logPassword", placeholder="Password", required="")
+            input#passConfirm(type="password", name="confirmPassword", placeholder="Confirm Password", required="")
+            input(type="submit", value="Submit")
+        a(href="/login") Already have an account?
+
+    script.
+        let password = document.getElementById('pass');
+        let passwordConf = document.getElementById('passConfirm');
+        let form = document.getElementById('registerForm');
+
+        function validatePass() {
+            if (password.value != passwordConf.value) {
+                alert('Passwords do not match');
+            } else {
+                form.submit();
+            }
+        }
