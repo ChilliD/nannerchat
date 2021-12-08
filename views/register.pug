@@ -6,8 +6,8 @@ block content
         form#registerForm(method="post", onsubmit="event.preventDefault(); validatePass();")
 
             p.error-message #{errorMsg}
-            input(type="text", name="logUsername", placeholder="Username", value=username, required="true")
-            input#pass(type="password", name="logPassword", placeholder="Password", required="")
+            input(type="text", name="username", placeholder="Username", value=username, required="true")
+            input#pass(type="password", name="password", placeholder="Password", required="")
             input#passConfirm(type="password", name="confirmPassword", placeholder="Confirm Password", required="")
             input(type="submit", value="Submit")
         a(href="/login") Already have an account?
