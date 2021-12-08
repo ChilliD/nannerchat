@@ -4,7 +4,6 @@ block content
     .login-container
         h1 Create Account 
         form#registerForm(method="post", onsubmit="event.preventDefault(); validatePass();")
-
             p.error-message #{errorMsg}
             input(type="text", name="username", placeholder="Username", value=username, required="true")
             input#pass(type="password", name="password", placeholder="Password", required="")
