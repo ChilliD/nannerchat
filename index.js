@@ -1,12 +1,13 @@
-const { application } = require('express');
 const express = require('express');
 const app = express();
 const fs = require('fs');
 const http = require('http');
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
-const middleware = require('./middleware.js');
+const middleware = require('./middleware');
 const bodyParser = require('body-parser');
+const mongoose = require('./database');
+
 
 app.set('view engine', 'pug');
 app.set('views', 'views');

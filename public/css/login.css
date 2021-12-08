@@ -6,20 +6,23 @@ body {
     background-color: #2a2a2e;
     color: #ffffff;
     font-size: 16px;
+    margin: 0;
+    padding: 0;
 }
 
 a {
     text-decoration: none;
-    color: #4cbf4b;
+    color: #cccccc;
 }
 
 a:hover {
-    color: #fbdd11;
+    color: #ffffff;
 }
 
 .wrapper {
     display: flex;
     justify-content: center;
+    margin-top: 2rem;
 }
 
 .login-container {
@@ -37,6 +40,7 @@ a:hover {
 form {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 input[type="text"],
@@ -44,16 +48,35 @@ input[type="password"] {
     margin-bottom: 1rem;
     padding: .5em .75em;
     border-radius: .5em;
-    border: 1px solid #fbdd11;
+    background-color: #2a2a2e;
+    color: #ffffff;
+    border: 2px solid #fbdd11;
+    width: 80%;
 }
 
 input[type="submit"] {
     background-color: #4cbf4b;
-    border: none;
+    border: 2px solid #3d993c;
     border-radius: .25em;
     margin-bottom: 1em;
+    width: 80%;
+}
+
+input[type="submit"]:hover {
+    border: 2px solid #5ec55d;
 }
 
 .error-message {
     color: #800000;
+}
+
+footer {
+    padding-top: .5rem;
+    border-top: 2px solid #2a2a2e;
+    text-align: center;
+    background-color: #212124;
+    color: #fbdd11;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
 }
