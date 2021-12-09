@@ -173,3 +173,19 @@ main {
 .postButtonWrap button:hover {
     color: #fbdd11;
 }
+
+.postButtonWrap button i, .postButtonWrap button span {
+    pointer-events: none;
+}
+
+.postButtonWrap button.activeLike {
+    color: #b30000;
+}
+
+.postButtonWrap button.activeRe {
+    color: #4cbf4b;
+}
+
+.postLikes {
+    font-size: .8em;
+}

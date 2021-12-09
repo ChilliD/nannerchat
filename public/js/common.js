@@ -12,7 +12,42 @@ textBox.addEventListener('keyup', (e) => {
     }
 });
 
-//Handle Post
+// Like Button
+function handleLikeButton(e) {
+    let button = e.target;
+    let postId = getPostId(button);
+    
+    if (!postId) return;
+
+    xhr.open('PUT', `/api/posts/${postId}/like`, true);
+    xhr.onload = () => {
+        let post = JSON.parse(xhr.responseText);
+        let likes = post.likes.length;
+        let likeSpan = button.querySelector('.postLikes');
+        likeSpan.innerText = likes || '';
+
+        if (post.likes.includes(userLoggedIn._id)) {
+            button.classList.add('activeLike');
+        } else {
+            button.classList.remove('activeLike');
+        }
+
+    };
+    xhr.send();
+};
+
+//Post ID
+function getPostId(element) {
+    let isRoot = element.classList.contains('post');
+    let rootEl = isRoot ? element : element.closest('.post');
+    let postId = rootEl.dataset.id;
+
+    if (!postId) { return alert('No Post Id') }
+
+    return postId;
+};
+
+//Handle Posting
 button.addEventListener('click', () => {
     let dataObj = {
         content: textBox.value.trim()
@@ -44,9 +79,10 @@ button.addEventListener('click', () => {
 function createPostHtml(postData) {
     let postUser = postData.postedBy;
     let postTime = timeDifference(new Date(), new Date(postData.createdAt));
+    let likeButtonActiveClass = postData.likes.includes(userLoggedIn._id) ? "activeLike" : "";
 
     return `
-        <div class="post">
+        <div class="post" data-id="${postData._id}">
             <div class="postMainContainer">
                 <div class="userImageWrap">
                     <img src="${postUser.profilePic}">
@@ -71,8 +107,9 @@ function createPostHtml(postData) {
                         </button>
                         </div>
                         <div class="postButtonWrap">
-                        <button>
+                        <button onclick=handleLikeButton(event) class=${likeButtonActiveClass}>
                             <i class="far fa-heart"></i>
+                            <span class="postLikes">${postData.likes.length || ''}</span>
                         </button>
                         </div>
                     </div>
@@ -136,4 +173,4 @@ function timeDifference(current, previous) {
             return Math.round(elapsed/msPerYear) + ' years ago';
         }
     }
-}
+};

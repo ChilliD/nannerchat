@@ -1,8 +1,8 @@
 
 xhr.open('GET', '/api/posts', true);
 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-xhr.onreadystatechange = () => {
-    if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
+xhr.onload = () => {
+    if (xhr.status >= 200 && xhr.status < 400) {
         let parsedResponse = JSON.parse(xhr.responseText);
         let container = document.getElementById('postsContainer');
         outputPosts(parsedResponse, container)
