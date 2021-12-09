@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const fs = require('fs');
 const http = require('http');
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
@@ -27,9 +26,14 @@ const loginRoute = require('./routes/loginRoutes.js');
 const registerRoute = require('./routes/registerRoutes.js');
 const logoutRoute = require('./routes/logout');
 
+//API Routes
+const postsAPIRoute = require('./routes/api/posts');
+
 app.use('/login', loginRoute);
 app.use('/register', registerRoute);
 app.use('/logout', logoutRoute);
+
+app.use('/api/posts', postsAPIRoute);
 
 app.get('/', middleware.requireLogin, (req, res, next) => {
 
