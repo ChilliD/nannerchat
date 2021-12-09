@@ -144,7 +144,32 @@ main {
     color: #fbdd11;
 }
 
+.postHeader a:hover {
+    text-decoration: underline;
+}
+
 .postDate {
     color: #aaaaaa;
     font-size: .85em;
+}
+
+.postFooter {
+    display: flex;
+    align-items: center;
+}
+
+.postButtonWrap {
+    flex: 1;
+    display: flex;
+}
+
+.postButtonWrap button {
+    background-color: transparent;
+    padding: 0 .25rem;
+    color: #aaaaaa;
+    border: none;
+}
+
+.postButtonWrap button:hover {
+    color: #fbdd11;
 }
