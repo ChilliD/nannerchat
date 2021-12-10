@@ -182,10 +182,26 @@ main {
     color: #b30000;
 }
 
-.postButtonWrap button.activeRe {
+.postButtonWrap button.activeRepost {
     color: #4cbf4b;
 }
 
-.postLikes {
+.postButtonWrap button span {
+    color: #aaaaaa;
+}
+
+.repostedBy {
+    padding-left: 2.5em;
+    margin-bottom: .5em;
     font-size: .8em;
+    color: #aaaaaa;
+}
+
+.repostedBy a {
+    text-decoration: none;
+    color: #aaaaaa;
+}
+
+.repostedBy a:hover {
+    color: #ffffff;
 }

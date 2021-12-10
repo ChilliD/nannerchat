@@ -10,8 +10,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 router.get('/', (req, res, next) => {
     Post.find()
     .populate('postedBy')
+    .populate('repostData')
     .sort({ 'createdAt': -1 })
-    .then(results => {
+    .then(async results => {
+        results = await User.populate(results, { path: "repostData.postedBy" });
         res.status(200).send(results);
     })
     .catch(error => {
@@ -65,5 +67,39 @@ router.put('/:id/like', async (req, res, next) => {
     res.status(200).send(post);
 });
 
+router.post('/:id/repost', async (req, res, next) => {
+    let postId = req.params.id;
+    let userId = req.session.user._id;
+    let deletedPost = await Post.findOneAndDelete({ postedBy: userId, repostData: postId })
+    .catch(error => {
+        console.log(error);
+        res.sendStatus(400);
+    });
+
+    let option = deletedPost != null ? '$pull' : '$addToSet';
+    let repost = deletedPost;
+
+    if (!repost) {
+        repost = await Post.create({ postedBy: userId, repostData: postId })
+        .catch(error => {
+            console.log(error);
+            res.sendStatus(400);
+        });
+    }
+
+    req.session.user = await User.findByIdAndUpdate(userId, { [option]: { reposts: repost._id } }, { new: true })
+    .catch(error => {
+        console.log(error);
+        res.sendStatus(400);
+    });
+
+    let post = await Post.findByIdAndUpdate(postId, { [option]: { repostUsers: userId } }, { new: true })
+    .catch(error => {
+        console.log(error);
+        res.sendStatus(400);
+    });
+
+    res.status(200).send(post);
+});
 
 module.exports = router;

@@ -36,6 +36,30 @@ function handleLikeButton(e) {
     xhr.send();
 };
 
+// Repost Button
+function handleRepostButton(e) {
+    let button = e.target;
+    let postId = getPostId(button);
+    
+    if (!postId) return;
+
+    xhr.open('POST', `/api/posts/${postId}/repost`, true);
+    xhr.onload = () => {
+        let post = JSON.parse(xhr.responseText);
+        let reposts = post.repostUsers.length;
+        let repostSpan = button.querySelector('.postReposts');
+        repostSpan.innerText = reposts || '';
+
+        if (post.repostUsers.includes(userLoggedIn._id)) {
+            button.classList.add('activeRepost');
+        } else {
+            button.classList.remove('activeRepost');
+        }
+
+    };
+    xhr.send();
+};
+
 //Post ID
 function getPostId(element) {
     let isRoot = element.classList.contains('post');
@@ -77,12 +101,32 @@ button.addEventListener('click', () => {
 });
 
 function createPostHtml(postData) {
+
+    if(postData == null) return console.log('No post data');
+
     let postUser = postData.postedBy;
     let postTime = timeDifference(new Date(), new Date(postData.createdAt));
     let likeButtonActiveClass = postData.likes.includes(userLoggedIn._id) ? "activeLike" : "";
+    let repostButtonActiveClass = postData.repostUsers.includes(userLoggedIn._id) ? "activeRepost" : "";
+    let isRepost = postData.repostData != undefined;
+    let repostedBy = isRepost ? postData.postedBy.username : null;
+
+    postData = isRepost ? postData.repostData : postData;
+
+    let repostText = '';
+    if (isRepost) {
+        repostText = `
+        <i class="fas fa-retweet"></i>
+        <span>
+            Reposted by <a href="/profile/${repostedBy}">@${repostedBy}</a>
+        </span>`;
+    }
 
     return `
         <div class="post" data-id="${postData._id}">
+            <div class="repostedBy">
+                ${repostText}
+            </div>
             <div class="postMainContainer">
                 <div class="userImageWrap">
                     <img src="${postUser.profilePic}">
@@ -102,8 +146,9 @@ function createPostHtml(postData) {
                         </button>
                         </div>
                         <div class="postButtonWrap">
-                        <button>
+                        <button onclick=handleRepostButton(event) class=${repostButtonActiveClass}>
                             <i class="fas fa-retweet"></i>
+                            <span class="postReposts">${postData.repostUsers.length || ''}</span>
                         </button>
                         </div>
                         <div class="postButtonWrap">
