@@ -4,14 +4,14 @@ xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 xhr.onload = () => {
         let parsedResponse = JSON.parse(xhr.responseText);
         let container = document.getElementById('postsContainer');
-        outputPosts(parsedResponse, container)
+        outputPosts(parsedResponse, container);
 };
 
 xhr.send();
 
 function outputPosts(results, container) {
     container.innerHTML = "";
-
+    
     results.forEach(result => {
         let post = document.createElement('div');
         let postHtml = createPostHtml(result);

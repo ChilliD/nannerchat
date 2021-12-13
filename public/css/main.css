@@ -16,7 +16,7 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    padding: 0;
+    padding: .5em 0;
 }
 
 nav a {

@@ -80,8 +80,8 @@ button.addEventListener('click', () => {
 
     xhr.open('POST', '/api/posts', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
+    xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 400) {
             let parsedResponse = JSON.parse(xhr.responseText);
             let container = document.getElementById('postsContainer');
             let postHtml = createPostHtml(parsedResponse);
@@ -92,8 +92,6 @@ button.addEventListener('click', () => {
             container.prepend(postElement);
             textBox.value = '';
             button.disabled = true;
-
-            console.log(parsedResponse);
         }
     };
     xhr.send(data);
