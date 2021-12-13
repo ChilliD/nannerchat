@@ -1,6 +1,9 @@
 
 let textBox = document.getElementById('postText');
 let button = document.getElementById('postSubmit');
+let replyBox = document.getElementById('replyText');
+let replyButton = document.getElementById('submitReplyBtn');
+let replyModal = document.getElementById('replyModal');
 const xhr = new XMLHttpRequest();
 
 // Enable/Disable post button 
@@ -12,8 +15,6 @@ textBox.addEventListener('keyup', (e) => {
     }
 });
 
-let replyBox = document.getElementById('replyText');
-let replyButton = document.getElementById('submitReplyBtn');
 replyBox.addEventListener('keyup', (e) => {
     if (e.target.value.trim() != "") {
         replyButton.disabled = false;
@@ -23,10 +24,10 @@ replyBox.addEventListener('keyup', (e) => {
 });
 
 // Comment Button
-let replyModal = document.getElementById('replyModal');
 replyModal.addEventListener('show.bs.modal', (e) => {
     let postButton = e.relatedTarget;
     let postId = getPostId(postButton);
+    replyButton.setAttribute('data-id', postId);
 
     xhr.open('GET', '/api/posts/' + postId, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -102,7 +103,7 @@ function getPostId(element) {
     return postId;
 };
 
-//Handle Posting
+//Handle Posting and Reply
 button.addEventListener('click', () => {
     let dataObj = {
         content: textBox.value.trim()
@@ -123,6 +124,33 @@ button.addEventListener('click', () => {
             container.prepend(postElement);
             textBox.value = '';
             button.disabled = true;
+        }
+    };
+    xhr.send(data);
+
+});
+
+replyButton.addEventListener('click', () => {
+    let dataObj = {
+        content: replyBox.value.trim(),
+        replyTo: replyButton.dataset.id
+    };
+    let data = new URLSearchParams(Object.entries(dataObj)).toString();
+
+    xhr.open('POST', '/api/posts', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 400) {
+            let parsedResponse = JSON.parse(xhr.responseText);
+            let container = document.getElementById('postsContainer');
+            let postHtml = createPostHtml(parsedResponse);
+            let postElement = document.createElement('div');
+
+            postElement.innerHTML = postHtml;
+
+            container.prepend(postElement);
+            replyBox.value = '';
+            replyButton.disabled = true;
         }
     };
     xhr.send(data);
