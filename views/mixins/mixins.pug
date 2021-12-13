@@ -5,4 +5,22 @@ mixin createPost(userLoggedIn)
         .textContainer 
             textarea#postText(placeholder="Write something...")
             .postButtons
-                button#postSubmit(disabled="") Post
+                button#postSubmit.btn.btn-primary(disabled="") Post
+
+mixin popupReply(userLoggedIn)
+    #replyModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='replyModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#replyModalLabel.modal-title Reply
+                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                .modal-body
+                    #modal-postContainer
+                    .postFormWrap
+                        .userImageWrap 
+                            img(src=userLoggedIn.profilePic, alt="Profile Picture")
+                        .textContainer 
+                            textarea#replyText(placeholder="Write something...")
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                    button#submitReplyBtn.btn.btn-primary(type='button', disabled="") Submit Reply

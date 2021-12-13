@@ -12,6 +12,37 @@ textBox.addEventListener('keyup', (e) => {
     }
 });
 
+let replyBox = document.getElementById('replyText');
+let replyButton = document.getElementById('submitReplyBtn');
+replyBox.addEventListener('keyup', (e) => {
+    if (e.target.value.trim() != "") {
+        replyButton.disabled = false;
+    } else {
+        replyButton.disabled = true;
+    }
+});
+
+// Comment Button
+let replyModal = document.getElementById('replyModal');
+replyModal.addEventListener('show.bs.modal', (e) => {
+    let postButton = e.relatedTarget;
+    let postId = getPostId(postButton);
+
+    xhr.open('GET', '/api/posts/' + postId, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = () => {
+            let parsedResponse = JSON.parse(xhr.responseText);
+            let container = document.getElementById('modal-postContainer');
+            outputPosts(parsedResponse, container);
+    };
+    xhr.send();
+
+});
+
+replyModal.addEventListener('hidden.bs.modal', (e) => {
+    document.getElementById('modal-postContainer').innerHTML = "";
+});
+
 // Like Button
 function handleLikeButton(e) {
     let button = e.target;
@@ -139,7 +170,7 @@ function createPostHtml(postData) {
                     </div>
                     <div class="postFooter">
                         <div class="postButtonWrap">
-                        <button>
+                        <button data-bs-toggle="modal" data-bs-target="#replyModal">
                             <i class="far fa-comment"></i>
                         </button>
                         </div>
@@ -160,6 +191,21 @@ function createPostHtml(postData) {
             </div>
         </div>
     `;
+};
+
+function outputPosts(results, container) {
+    container.innerHTML = "";
+    
+    results.forEach(result => {
+        let post = document.createElement('div');
+        let postHtml = createPostHtml(result);
+        post.innerHTML = postHtml;
+        container.appendChild(post);
+    });
+
+    if (results.length == 0) {
+        container.appendChild(`<span>Nothing to show</span>`);
+    }
 };
 
 /* Relative Timestamp */

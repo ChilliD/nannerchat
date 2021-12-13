@@ -93,21 +93,39 @@ main {
     resize: none;
 }
 
-#postSubmit {
+#postSubmit, #submitReplyBtn {
     background-color: #4cbf4b;
-    padding: .25em .5em;
-    color: #21212a;
-    border-radius: .5rem;
     border: none;
 }
 
-#postSubmit:hover {
-    color: #ffffff;
+#postSubmit:hover, #submitReplyBtn:hover {
+    background-color: #44ac44;
 }
 
-#postSubmit:disabled {
-    background-color: #aaaaaa;
-    color: #2a2a2e;
+/* POST REPLY */
+
+.modal-content {
+    background-color: #2a2a2e;
+}
+
+.modal .postFormWrap {
+    border: none;
+    padding: 0;
+    padding-top: 1em;
+}
+
+.modal-header {
+    border-bottom: 1px solid #21212a;
+}
+
+.modal-footer {
+    border-top: 1px solid #21212a;
+}
+
+.modal .post {
+    padding: 0;
+    padding-bottom: .5em;
+    border-bottom: 1px solid #21212a;
 }
 
 /* POST */
@@ -130,12 +148,14 @@ main {
     display: flex;
     flex-direction: column;
     flex: 1;
+    line-height: 1.25em;
 }
 
 .postHeader {
     display: flex;
     justify-content: space-between;
     padding-right: .5rem;
+    padding-bottom: .2rem;
 }
 
 .postHeader a {
@@ -154,6 +174,7 @@ main {
 }
 
 .postFooter {
+    padding-top: .5rem;
     display: flex;
     align-items: center;
 }
@@ -183,7 +204,7 @@ main {
 }
 
 .postButtonWrap button.activeRepost {
-    color: #4cbf4b;
+    color: #44ac44;
 }
 
 .postButtonWrap button span {

@@ -7,19 +7,15 @@ const Post = require('../../schemas/PostSchema');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-router.get('/', (req, res, next) => {
-    Post.find()
-    .populate('postedBy')
-    .populate('repostData')
-    .sort({ 'createdAt': -1 })
-    .then(async results => {
-        results = await User.populate(results, { path: "repostData.postedBy" });
-        res.status(200).send(results);
-    })
-    .catch(error => {
-        console.log(error);
-        res.sendStatus(400);
-    })
+router.get('/', async (req, res, next) => {
+    let results = await getPosts({});
+    res.status(200).send(results);
+});
+
+router.get('/:id', async (req, res, next) => {
+    let postId = req.params.id;
+    let results = await getPosts({ _id: postId });
+    res.status(200).send(results);
 });
 
 router.post('/', async (req, res, next) => {
@@ -101,5 +97,31 @@ router.post('/:id/repost', async (req, res, next) => {
 
     res.status(200).send(post);
 });
+
+async function getPosts(filter) {
+    let results = Post.find(filter)
+    .populate('postedBy')
+    .populate('repostData')
+    .sort({ 'createdAt': -1 })
+    .catch(error => console.log(error))
+
+    return await User.populate(results, { path: "repostData.postedBy" });
+}
+
+/* OLD GET POSTS
+Post.find()
+.populate('postedBy')
+.populate('repostData')
+.sort({ 'createdAt': -1 })
+.then(async results => {
+    results = await User.populate(results, { path: "repostData.postedBy" });
+    res.status(200).send(results);
+})
+.catch(error => {
+    console.log(error);
+    res.sendStatus(400);
+}) 
+*/
+
 
 module.exports = router;
