@@ -141,6 +141,10 @@ replyButton.addEventListener('click', () => {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 400) {
+
+            location.reload();
+
+            /* Outputs post instead of hard reload
             let parsedResponse = JSON.parse(xhr.responseText);
             let container = document.getElementById('postsContainer');
             let postHtml = createPostHtml(parsedResponse);
@@ -150,7 +154,7 @@ replyButton.addEventListener('click', () => {
 
             container.prepend(postElement);
             replyBox.value = '';
-            replyButton.disabled = true;
+            replyButton.disabled = true; */
         }
     };
     xhr.send(data);
@@ -179,6 +183,24 @@ function createPostHtml(postData) {
         </span>`;
     }
 
+    let replyFlag = '';
+    if (postData.replyTo) {
+
+        if (!postData.replyTo._id) {
+            return alert('replyTo not populated');
+        } else if (!postData.replyTo.postedBy._id) {
+            return alert('postedBy not populated');
+        }
+
+        let replyToUsername = postData.replyTo.postedBy.username;
+
+        replyFlag = `
+        <div class="replyFlag">
+            Replying to <a href="/profile/${replyToUsername}">@${replyToUsername}</a>
+        </div>
+        `;
+    }
+
     return `
         <div class="post" data-id="${postData._id}">
             <div class="repostedBy">
@@ -193,6 +215,7 @@ function createPostHtml(postData) {
                         <a href="/profile/${postUser.username}">${postUser.username}</a>
                         <span class="postDate">${postTime}</span>
                     </div>
+                    ${replyFlag}
                     <div class="postBody">
                         <span>${postData.content}</span>
                     </div>
@@ -236,7 +259,7 @@ function outputPosts(results, container) {
     }
 };
 
-/* Relative Timestamp */
+// Relative Timestamp
 function timeDifference(current, previous) {
 
     var msPerMinute = 60 * 1000;

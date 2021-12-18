@@ -218,11 +218,16 @@ main {
     color: #aaaaaa;
 }
 
-.repostedBy a {
+.repostedBy a, .replyFlag a {
     text-decoration: none;
     color: #aaaaaa;
 }
 
-.repostedBy a:hover {
+.repostedBy a:hover, .replyFlag a:hover {
     color: #ffffff;
+}
+
+.replyFlag {
+    font-size: .8em;
+    color: #aaaaaa;
 }
