@@ -4,6 +4,7 @@ let button = document.getElementById('postSubmit');
 let replyBox = document.getElementById('replyText');
 let replyButton = document.getElementById('submitReplyBtn');
 let replyModal = document.getElementById('replyModal');
+let posts = Array.from(document.getElementsByClassName('post'));
 const xhr = new XMLHttpRequest();
 
 // Enable/Disable post button 
@@ -101,6 +102,17 @@ function getPostId(element) {
     if (!postId) { return alert('No Post Id') }
 
     return postId;
+};
+
+//View Post
+function handlePostClick(e) {
+        let element = e.target;
+        let postId = getPostId(element);
+        
+        if(!postId !== undefined && element.tagName !== "BUTTON") {
+            window.location.href = '/post/' + postId;
+        }
+
 };
 
 //Handle Posting and Reply
@@ -202,7 +214,7 @@ function createPostHtml(postData) {
     }
 
     return `
-        <div class="post" data-id="${postData._id}">
+        <div class="post" data-id="${postData._id}" onclick="handlePostClick(event)">
             <div class="repostedBy">
                 ${repostText}
             </div>
