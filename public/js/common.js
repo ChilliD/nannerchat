@@ -8,21 +8,25 @@ let posts = Array.from(document.getElementsByClassName('post'));
 const xhr = new XMLHttpRequest();
 
 // Enable/Disable post button 
-textBox.addEventListener('keyup', (e) => {
-    if (e.target.value.trim() != "") {
-        button.disabled = false;
-    } else {
-        button.disabled = true;
-    }
-});
+if (textBox) {
+    textBox.addEventListener('keyup', (e) => {
+        if (e.target.value.trim() != "") {
+            button.disabled = false;
+        } else {
+            button.disabled = true;
+        }
+    });
+}
 
-replyBox.addEventListener('keyup', (e) => {
-    if (e.target.value.trim() != "") {
-        replyButton.disabled = false;
-    } else {
-        replyButton.disabled = true;
-    }
-});
+if (replyBox) {
+    replyBox.addEventListener('keyup', (e) => {
+        if (e.target.value.trim() != "") {
+            replyButton.disabled = false;
+        } else {
+            replyButton.disabled = true;
+        }
+    });
+}
 
 // Comment Button
 replyModal.addEventListener('show.bs.modal', (e) => {
@@ -35,7 +39,7 @@ replyModal.addEventListener('show.bs.modal', (e) => {
     xhr.onload = () => {
             let parsedResponse = JSON.parse(xhr.responseText);
             let container = document.getElementById('modal-postContainer');
-            outputPosts(parsedResponse, container);
+            outputPosts(parsedResponse.postData, container);
     };
     xhr.send();
 
@@ -116,62 +120,66 @@ function handlePostClick(e) {
 };
 
 //Handle Posting and Reply
-button.addEventListener('click', () => {
-    let dataObj = {
-        content: textBox.value.trim()
-    };
-    let data = new URLSearchParams(Object.entries(dataObj)).toString();
+if (button) {
+    button.addEventListener('click', () => {
+        let dataObj = {
+            content: textBox.value.trim()
+        };
+        let data = new URLSearchParams(Object.entries(dataObj)).toString();
 
-    xhr.open('POST', '/api/posts', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 400) {
-            let parsedResponse = JSON.parse(xhr.responseText);
-            let container = document.getElementById('postsContainer');
-            let postHtml = createPostHtml(parsedResponse);
-            let postElement = document.createElement('div');
+        xhr.open('POST', '/api/posts', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 400) {
+                let parsedResponse = JSON.parse(xhr.responseText);
+                let container = document.getElementById('postsContainer');
+                let postHtml = createPostHtml(parsedResponse);
+                let postElement = document.createElement('div');
 
-            postElement.innerHTML = postHtml;
+                postElement.innerHTML = postHtml;
 
-            container.prepend(postElement);
-            textBox.value = '';
-            button.disabled = true;
-        }
-    };
-    xhr.send(data);
+                container.prepend(postElement);
+                textBox.value = '';
+                button.disabled = true;
+            }
+        };
+        xhr.send(data);
 
-});
+    });
+}
 
-replyButton.addEventListener('click', () => {
-    let dataObj = {
-        content: replyBox.value.trim(),
-        replyTo: replyButton.dataset.id
-    };
-    let data = new URLSearchParams(Object.entries(dataObj)).toString();
+if (replyButton) {
+    replyButton.addEventListener('click', () => {
+        let dataObj = {
+            content: replyBox.value.trim(),
+            replyTo: replyButton.dataset.id
+        };
+        let data = new URLSearchParams(Object.entries(dataObj)).toString();
 
-    xhr.open('POST', '/api/posts', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 400) {
+        xhr.open('POST', '/api/posts', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 400) {
 
-            location.reload();
+                location.reload();
 
-            /* Outputs post instead of hard reload
-            let parsedResponse = JSON.parse(xhr.responseText);
-            let container = document.getElementById('postsContainer');
-            let postHtml = createPostHtml(parsedResponse);
-            let postElement = document.createElement('div');
+                /* Outputs post instead of hard reload
+                let parsedResponse = JSON.parse(xhr.responseText);
+                let container = document.getElementById('postsContainer');
+                let postHtml = createPostHtml(parsedResponse);
+                let postElement = document.createElement('div');
 
-            postElement.innerHTML = postHtml;
+                postElement.innerHTML = postHtml;
 
-            container.prepend(postElement);
-            replyBox.value = '';
-            replyButton.disabled = true; */
-        }
-    };
-    xhr.send(data);
+                container.prepend(postElement);
+                replyBox.value = '';
+                replyButton.disabled = true; */
+            }
+        };
+        xhr.send(data);
 
-});
+    });
+}
 
 function createPostHtml(postData) {
 
@@ -270,6 +278,30 @@ function outputPosts(results, container) {
         container.appendChild(`<span>Nothing to show</span>`);
     }
 };
+
+function outputPostsIncludeReplies(results, container) {
+    container.innerHTML = "";
+    
+    if (results.replyTo && results.replyTo._id !== undefined) {
+        let post = document.createElement('div');
+        let postHtml = createPostHtml(results.replyTo);
+        post.innerHTML = postHtml;
+        container.appendChild(post);
+    }
+
+    let originalPostHtml = createPostHtml(results.postData);
+    let post = document.createElement('div');
+    post.innerHTML = originalPostHtml;
+    container.appendChild(post);
+
+    results.replies.forEach(result => {
+        let post = document.createElement('div');
+        let postHtml = createPostHtml(result);
+        post.innerHTML = postHtml;
+        container.appendChild(post);
+    });
+
+}
 
 // Relative Timestamp
 function timeDifference(current, previous) {
