@@ -4,6 +4,8 @@ let button = document.getElementById('postSubmit');
 let replyBox = document.getElementById('replyText');
 let replyButton = document.getElementById('submitReplyBtn');
 let replyModal = document.getElementById('replyModal');
+let deleteModal = document.getElementById('deletePostModal');
+let deleteButton = document.getElementById('deletePostBtn');
 let posts = Array.from(document.getElementsByClassName('post'));
 const xhr = new XMLHttpRequest();
 
@@ -27,6 +29,25 @@ if (replyBox) {
         }
     });
 }
+
+//Delete Post Button
+deleteModal.addEventListener('show.bs.modal', (e) => {
+    let postButton = e.relatedTarget;
+    let postId = getPostId(postButton);
+    deleteButton.setAttribute('data-id', postId);
+
+});
+
+deleteButton.addEventListener('click', (e) => {
+    let postId = e.target.dataset.id;
+
+    xhr.open('DELETE', `/api/posts/${postId}`, true);
+    xhr.onload = () => {
+        location.reload();
+    };
+    xhr.send();
+
+});
 
 // Comment Button
 replyModal.addEventListener('show.bs.modal', (e) => {
@@ -181,7 +202,7 @@ if (replyButton) {
     });
 }
 
-function createPostHtml(postData) {
+function createPostHtml(postData, largeFont = false) {
 
     if(postData == null) return console.log('No post data');
 
@@ -191,6 +212,7 @@ function createPostHtml(postData) {
     let repostButtonActiveClass = postData.repostUsers.includes(userLoggedIn._id) ? "activeRepost" : "";
     let isRepost = postData.repostData != undefined;
     let repostedBy = isRepost ? postData.postedBy.username : null;
+    let largeFontClass = largeFont ? "largeFont" : "";
 
     postData = isRepost ? postData.repostData : postData;
 
@@ -204,7 +226,7 @@ function createPostHtml(postData) {
     }
 
     let replyFlag = '';
-    if (postData.replyTo) {
+    if (postData.replyTo && postData.replyTo._id) {
 
         if (!postData.replyTo._id) {
             return alert('replyTo not populated');
@@ -221,8 +243,13 @@ function createPostHtml(postData) {
         `;
     }
 
+    let userButtons = "";
+    if (postData.postedBy._id == userLoggedIn._id) {
+        userButtons = `<button class="userButtons" data-id="${postData._id}" data-bs-toggle="modal" data-bs-target="#deletePostModal"><i class="far fa-trash-alt"></i></button>`
+    }
+
     return `
-        <div class="post" data-id="${postData._id}" onclick="handlePostClick(event)">
+        <div class="post ${largeFontClass}" data-id="${postData._id}" onclick="handlePostClick(event)">
             <div class="repostedBy">
                 ${repostText}
             </div>
@@ -234,6 +261,7 @@ function createPostHtml(postData) {
                     <div class="postHeader">
                         <a href="/profile/${postUser.username}">${postUser.username}</a>
                         <span class="postDate">${postTime}</span>
+                        ${userButtons}
                     </div>
                     ${replyFlag}
                     <div class="postBody">
@@ -289,7 +317,7 @@ function outputPostsIncludeReplies(results, container) {
         container.appendChild(post);
     }
 
-    let originalPostHtml = createPostHtml(results.postData);
+    let originalPostHtml = createPostHtml(results.postData, true);
     let post = document.createElement('div');
     post.innerHTML = originalPostHtml;
     container.appendChild(post);

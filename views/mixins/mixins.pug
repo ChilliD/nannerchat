@@ -24,3 +24,25 @@ mixin popupReply(userLoggedIn)
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
                     button#submitReplyBtn.btn.btn-primary(type='button', disabled="") Submit Reply
+
+mixin deletePostModal()
+    #deletePostModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='deletePostModalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#deletPostModalLabel.modal-title Delete Post?
+                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                .modal-body
+                    p You won't be able to undo this.
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancel
+                    button#deletePostBtn.btn.btn-primary(type='button') Confirm Delete
+
+mixin createPostModals(userLoggedIn)
+    +popupReply(userLoggedIn)
+    +deletePostModal()
+
+mixin createFollowButton(user, isFollowing)
+    - text = isFollowing ? "Following" : "Follow"
+    - buttonClass = isFollowing ? "followBtn following" : "followBtn"
+    button(class=buttonClass class="profileButton", data-user=user._id) #{text}
