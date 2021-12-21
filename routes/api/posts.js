@@ -29,6 +29,28 @@ router.get('/:id', async (req, res, next) => {
     res.status(200).send(results);
 });
 
+router.get('/userposts/:id', async (req, res, next) => {
+    let userId = req.params.id;
+    let searchFilter = {
+        postedBy: userId,
+        replyTo: { $exists: false }
+    };
+
+    let results = await getPosts(searchFilter);
+    res.status(200).send(results);
+});
+
+router.get('/userreplies/:id', async (req, res, next) => {
+    let userId = req.params.id;
+    let searchFilter = {
+        postedBy: userId,
+        replyTo: { $exists: true }
+    };
+
+    let results = await getPosts(searchFilter);
+    res.status(200).send(results);
+});
+
 router.post('/', async (req, res, next) => {
 
     if (!req.body.content) {

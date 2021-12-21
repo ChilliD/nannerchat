@@ -303,7 +303,11 @@ function outputPosts(results, container) {
     });
 
     if (results.length == 0) {
-        container.appendChild(`<span>Nothing to show</span>`);
+        container.innerHTML = `
+        <div class="msgWrap">
+            <span class="noPostsMsg">Nothing to show</span>
+        </div>
+        `;
     }
 };
 

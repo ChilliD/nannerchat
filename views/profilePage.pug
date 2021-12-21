@@ -4,6 +4,9 @@ block content
     if !profileUser
         h2 User Not Found
     else
+        script.
+                let profileUserId = "!{profileUser._id}"
+                let activeTab = "!{selectedTab}"
         .profileHeaderWrap 
             .coverPhotoWrap 
                 
@@ -14,6 +17,22 @@ block content
                     a.profileButton(href=`/messages/${profileUser._id}`)
                         i.far.fa-envelope
                     +createFollowButton(profileUser, false)
+            .userDetailsWrap
+                span.profileUsername #{profileUser.username}
+                span.profileBio  #{profileUser.bio}
+
+                .followersWrap
+                    a(href=`/profile/${profileUser.username}/following`)
+                        span.followCount #{0}
+                        span.followText Following 
+                    a(href=`/profile/${profileUser.username}/followers`)
+                        span.followCount #{0}
+                        span.followText Followers
+
+        .tabsContainer 
+            +createTab("Posts", `/profile/${profileUser.username}`, selectedTab != "replies")
+            +createTab("Replies", `/profile/${profileUser.username}/replies`, selectedTab == "replies")
+
         div#postsContainer
         +createPostModals(userLoggedIn)
 

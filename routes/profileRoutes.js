@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 router.get('/', async (req, res, next) => {
 
     let payload = await getPayload(req.session.user.username, req.session.user);
+    payload.pageTitle = "Your Profile";
 
     res.status(200).render('profilePage', payload);
 });
@@ -21,6 +22,14 @@ router.get('/', async (req, res, next) => {
 router.get('/:username', async (req, res, next) => {
 
     let payload = await getPayload(req.params.username, req.session.user);
+
+    res.status(200).render('profilePage', payload);
+});
+
+router.get('/:username/replies', async (req, res, next) => {
+
+    let payload = await getPayload(req.params.username, req.session.user);
+    payload.selectedTab = "replies";
 
     res.status(200).render('profilePage', payload);
 });
@@ -37,7 +46,7 @@ async function getPayload(username, userLoggedIn) {
     }
 
     return {
-        pageTitle: user.username,
+        pageTitle: "View Profile",
         userLoggedIn: userLoggedIn,
         userLoggedInClient: JSON.stringify(userLoggedIn),
         profileUser: user
